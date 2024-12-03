@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webhook Test</title>
+</head>
+<body>
+  <h1>Webhook Test</h1>
+  <form id="webhookForm">
+    <label for="event">Event Name:</label>
+    <input type="text" id="event" name="event" placeholder="Enter event name" required>
+    <br><br>
+    <label for="message">Message:</label>
+    <input type="text" id="message" name="message" placeholder="Enter message" required>
+    <br><br>
+    <button type="submit">Send Webhook</button>
+  </form>
+  <p id="response"></p>
+
+  <script>
+    document.getElementById('webhookForm').addEventListener('submit', async (e) => {
+      e.preventDefault(); // Prevent form submission
+
+      const event = document.getElementById('event').value;
+      const message = document.getElementById('message').value;
+
+      const payload = {
+        event: event,
+        data: { message: message }
+      };
+
+      try {
+        const response = await fetch('http://localhost:1090/webhook', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(payload),
+        });
+
+        const text = await response.text();
+        document.getElementById('response').textContent = `Server responded: ${text}`;
+      } catch (error) {
+        console.error('Error:', error);
+        document.getElementById('response').textContent = `Error: ${error.message}`;
+      }
+    });
+  </script>
+</body>
+</html>
